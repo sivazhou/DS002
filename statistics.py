@@ -24,7 +24,7 @@ from genericpath import isdir
 
 # Clone the repository with the latest code
 print("Clone the repo")
-!git clone https://github.com/scrippscollege/DS_002.git dgoodwin
+!git clone https://github.com/sivazhou/DS002.git sivazhou
 
 # %cd /content/dgoodwin
 !git pull
@@ -40,7 +40,7 @@ import matplotlib.pyplot as plt
 from typing import List
 import math
 
-from dgoodwin.linear_algebra import sum_of_squares, dot
+from sivazhou.linear_algebra import sum_of_squares, dot
 
 # Data
 num_friends = [100.0,49,41,40,25,21,21,19,19,18,18,16,
@@ -213,7 +213,7 @@ assert interquartile_range(num_friends) == 6
 assert 22.42 < covariance(num_friends, daily_minutes) < 22.43
 assert 22.42 / 60 < covariance(num_friends, daily_hours) < 22.43 / 60
 
-from dgoodwin import statistics as stats
+from sivazhou import statistics as stats
 
 help(stats)
 
