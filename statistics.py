@@ -26,7 +26,7 @@ from genericpath import isdir
 print("Clone the repo")
 !git clone https://github.com/sivazhou/DS002.git sivazhou
 
-# %cd /content/dgoodwin
+# %cd /content/sivazhou
 !git pull
 
 # %cd /content/
