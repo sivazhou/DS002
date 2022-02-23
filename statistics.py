@@ -24,7 +24,7 @@ from genericpath import isdir
 
 # Clone the repository with the latest code
 print("Clone the repo")
-!git clone https://github.com/sivazhou/DS002.git sivazhou
+!git clone https://github.com/sivazhou/DS002.git
 
 # %cd /content/sivazhou
 !git pull
