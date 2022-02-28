@@ -158,7 +158,11 @@ def _median_even(xs: List[float]) -> float:
 #         Finds the 'middle-most' value of v
 
 def median(v: List[float]) -> float:
-    return None
+    """Finds the 'middle-most' value of v"""
+    return _median_even(v) if len(v) % 2 == 0 else _median_odd(v)
+
+assert median([1, 10, 2, 9, 5]) == 5
+assert median([1, 9, 2, 10]) == (2 + 9) / 2
 
 
 #
@@ -166,7 +170,11 @@ def median(v: List[float]) -> float:
 #         Returns a list, since there might be more than one mode
 
 def mode(x: List[float]) -> List[float]:
-    return None
+    """Returns a list, since there might be more than one mode"""
+    counts = Counter(x)
+    max_count = max(counts.values())
+    return [x_i for x_i, count in counts.items()
+            if count == max_count]
 
 
 #
