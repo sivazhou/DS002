@@ -1,202 +1,230 @@
-{
-  "nbformat": 4,
-  "nbformat_minor": 0,
-  "metadata": {
-    "colab": {
-      "name": "linear_algebra.ipynb",
-      "provenance": [],
-      "authorship_tag": "ABX9TyMhXZNy5Ai8qOc+JY3buyzl",
-      "include_colab_link": true
-    },
-    "kernelspec": {
-      "name": "python3",
-      "display_name": "Python 3"
-    },
-    "language_info": {
-      "name": "python"
-    }
-  },
-  "cells": [
-    {
-      "cell_type": "markdown",
-      "metadata": {
-        "id": "view-in-github",
-        "colab_type": "text"
-      },
-      "source": [
-        "<a href=\"https://colab.research.google.com/github/sivazhou/DS002/blob/main/linear_algebra.py\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
-      ]
-    },
-    {
-      "cell_type": "code",
-      "execution_count": 24,
-      "metadata": {
-        "id": "mP-M-d0cSkY7"
-      },
-      "outputs": [],
-      "source": [
-        "from typing import List\n",
-        "\n",
-        "Vector = List[float]\n",
-        "Matrix = List[List[float]]\n",
-        "\n",
-        "\n",
-        "def add(v: Vector, w: Vector) -> Vector:\n",
-        "    \"\"\"Adds corresponding elements\"\"\"\n",
-        "    assert len(v) == len(w), \"vectors must be the same length\"\n",
-        "\n",
-        "    return [v_i + w_i for v_i, w_i in zip(v,w)]\n",
-        "\n",
-        "def subtract(v: Vector, w: Vector) -> Vector:\n",
-        "    \"\"\"Subtracts corresponding elements\"\"\"\n",
-        "    assert len(v) == len(w), \"vectors must be the same length\"\n",
-        "\n",
-        "    return [v_i - w_i for v_i, w_i in zip(v,w)]\n",
-        "\n",
-        "\n",
-        "def vector_sum(vectors: List[Vector]) -> Vector:\n",
-        "    \"\"\"Sums all corresponding elements\"\"\"\n",
-        "    # Check that vectors is not empty\n",
-        "    assert vectors, \"no vectors provided!\"\n",
-        "\n",
-        "    # Check the vectors are all the same size\n",
-        "    num_elements = len(vectors[0])\n",
-        "    assert all(len(v) == num_elements for v in vectors), \"different sizes!\"\n",
-        "\n",
-        "    # the i-th element of the result is the sum of every vector[i]\n",
-        "    return [sum(vector[i] for vector in vectors)\n",
-        "            for i in range(num_elements)]\n",
-        "\n",
-        "\n",
-        "def scalar_multiply(c: float, v: Vector) -> Vector:\n",
-        "    \"\"\"Multiplies every element by c\"\"\"\n",
-        "    return [c*i for i in v]\n",
-        "\n",
-        "\n",
-        "def vector_mean(vectors: List[Vector]) -> Vector:\n",
-        "    \"\"\"Computes the element-wise average\"\"\"\n",
-        "    n = len(vectors)\n",
-        "    return scalar_multiply(1/n, vector_sum(vectors))\n",
-        "\n",
-        "\n",
-        "def dot(v: Vector, w: Vector) -> float:\n",
-        "    \"\"\"Computes v_1 * w_1 + ... + v_n * w_n\"\"\"\n",
-        "    assert len(v) == len(w), \"vectors must be same length\"\n",
-        "\n",
-        "    return sum(v_i * w_i for v_i, w_i in zip(v, w))\n",
-        "\n",
-        "\n",
-        "def sum_of_squares(v: Vector) -> float:\n",
-        "    \"\"\"Returns v_1 * v_1 + ... + v_n * v_n\"\"\"\n",
-        "    return dot(v, v)\n",
-        "\n",
-        "\n",
-        "import math\n",
-        "\n",
-        "def magnitude(v: Vector) -> float:\n",
-        "    \"\"\"Returns the magnitude (or length) of v\"\"\"\n",
-        "    return math.sqrt(sum_of_squares(v))   # math.sqrt is square root function\n",
-        "\n",
-        "\n",
-        "def squared_distance(v: Vector, w: Vector) -> float:\n",
-        "    \"\"\"Computes (v_1 - w_1) ** 2 + ... + (v_n - w_n) ** 2\"\"\"\n",
-        "    return sum_of_squares(subtract(v, w))\n",
-        "\n",
-        "def distance(v: Vector, w: Vector) -> float:\n",
-        "    \"\"\"Computes the distance between v and w\"\"\"\n",
-        "    return math.sqrt(squared_distance(v, w))\n",
-        "\n",
-        "\n",
-        "def distance(v: Vector, w: Vector) -> float:  # type: ignore\n",
-        "    return magnitude(subtract(v, w))\n",
-        "\n",
-        "from typing import Tuple\n",
-        "\n",
-        "def shape(A: Matrix) -> Tuple[int, int]:\n",
-        "    \"\"\"Returns (# of rows of A, # of columns of A)\"\"\"\n",
-        "    num_rows = len(A)\n",
-        "    num_cols = len(A[0]) if A else 0   # number of elements in first row\n",
-        "    return num_rows, num_cols\n",
-        "\n",
-        "def get_row(A: Matrix, i: int) -> Tuple:\n",
-        "    \"\"\"Returns the specified row\"\"\"\n",
-        "    return A[i]\n",
-        "\n",
-        "def get_column(A: Matrix, j: int) -> Tuple:\n",
-        "    \"\"\"Returns the specified column\"\"\"\n",
-        "    col = []\n",
-        "    for i in range(len(A)):\n",
-        "      row = A[i]\n",
-        "      col.append(row[j])\n",
-        "    return col\n",
-        "  \n",
-        "from typing import Callable\n",
-        "\n",
-        "def make_matrix(num_rows: int,\n",
-        "                num_cols: int,\n",
-        "                entry_fn: Callable[[int, int], float]) -> Matrix:\n",
-        "    \"\"\"\n",
-        "    Returns a num_rows x num_cols matrix\n",
-        "    whose (i,j)-th entry is entry_fn(i, j)\n",
-        "    \"\"\"\n",
-        "    return [[entry_fn(i, j)             # given i, create a list\n",
-        "             for j in range(num_cols)]  #   [entry_fn(i, 0), ... ]\n",
-        "            for i in range(num_rows)]   # create one list for each i\n",
-        "\n",
-        "def identity_matrix(n: int) -> Matrix:\n",
-        "    \"\"\"Returns the n x n identity matrix\"\"\"\n",
-        "    return make_matrix(n, n, lambda i, j: 1 if i == j else 0)\n",
-        "\n",
-        "assert add([1, 2, 3], [10,9,8]) == [11,11,11], \"something wrong with add()\"\n",
-        "assert subtract([11,11,11], [1, 2, 3]) == [10,9,8], \"trouble with subtract()\"\n",
-        "assert vector_sum([[3,4], [5,6], [7,8]]) == [15, 18], \"vector_sum() problem\"\n",
-        "assert vector_mean([[1, 2], [3, 4], [5, 6]]) == [3, 4], \"oopsie vector_mean()\"\n",
-        "assert dot([1, 2, 3], [4, 5, 6]) == 32, \"dot() issue\"  # 1 * 4 + 2 * 5 + 3 * 6\n",
-        "\n"
-      ]
-    },
-    {
-      "cell_type": "code",
-      "source": [
-        "# Add these tests to the end of your linear_algebra.py file\n",
-        "# commit and push the update to GitHub\n",
-        "\n",
-        "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n",
-        "# Extra assert statements to test all of the functions you will need\n",
-        "# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n",
-        "assert add([1, 2, 3], [4, 5, 6]) == [5, 7, 9]\n",
-        "assert subtract([5, 7, 9], [4, 5, 6]) == [1, 2, 3]\n",
-        "assert vector_sum([[1, 2], [3, 4], [5, 6], [7, 8]]) == [16, 20]\n",
-        "assert scalar_multiply(2, [1, 2, 3]) == [2, 4, 6]\n",
-        "assert vector_mean([[1, 2], [3, 4], [5, 6]]) == [3, 4]\n",
-        "assert dot([1, 2, 3], [4, 5, 6]) == 32  # 1 * 4 + 2 * 5 + 3 * 6\n",
-        "assert sum_of_squares([1, 2, 3]) == 14  # 1 * 1 + 2 * 2 + 3 * 3\n",
-        "assert magnitude([3, 4]) == 5\n",
-        "assert shape([[1, 2, 3], [4, 5, 6]]) == (2, 3)  # 2 rows, 3 columns\n",
-        "assert distance([1,1],[4,1]) == 3.0\n",
-        "assert squared_distance([1,2,3],[2,3,4]) == 3\n",
-        "assert scalar_multiply(2, [1,2,3]) == [2,4,6]\n",
-        "assert magnitude([0,0,4,3]) == 5.0\n",
-        "\n",
-        "# Work on an Identity Matrix\n",
-        "id = [  [1, 0, 0, 0, 0],\n",
-        "        [0, 1, 0, 0, 0],\n",
-        "        [0, 0, 1, 0, 0],\n",
-        "        [0, 0, 0, 1, 0],\n",
-        "        [0, 0, 0, 0, 1] ]\n",
-        "\n",
-        "assert get_column(id,2) == [0, 0, 1, 0, 0]\n",
-        "assert get_row(id,2) == [0, 0, 1, 0, 0]\n",
-        "assert get_column(id,2) == get_row(id,2)\n",
-        "assert identity_matrix(5) == id\n",
-        "assert make_matrix(5,5, lambda i,j: 1 if i == j else 0) == id\n",
-        "assert shape(id) == (5,5)"
-      ],
-      "metadata": {
-        "id": "ocHtl7pz9NRh"
-      },
-      "execution_count": 25,
-      "outputs": []
-    }
-  ]
-}
+# Code based on Data Science from Scratch
+# with corrections for Scripps College
+# DS002, Spring 2022
+# Professor Douglas Goodwin
+
+# # # # # # # # # # # # # # # # # # # # # # # #
+# Imports
+# # # # # # # # # # # # # # # # # # # # # # # #
+
+# python imports
+from typing import List
+import math
+
+# local code imports
+
+# other imports
+import matplotlib.pyplot as plt
+
+# # # # # # # # # # # # # # # # # # # # # # # #
+# Let's go!
+# # # # # # # # # # # # # # # # # # # # # # # #
+
+Vector = List[float]
+
+height_weight_age = [70,  # inches,
+                     170, # pounds,
+                     40 ] # years
+
+grades = [95,   # exam1
+          80,   # exam2
+          75,   # exam3
+          62 ]  # exam4
+
+def add(v: Vector, w: Vector) -> Vector:
+    """Adds corresponding elements"""
+    assert len(v) == len(w), "vectors must be the same length"
+
+    return [v_i + w_i for v_i, w_i in zip(v, w)]
+
+assert add([1, 2, 3], [4, 5, 6]) == [5, 7, 9]
+
+def subtract(v: Vector, w: Vector) -> Vector:
+    """Subtracts corresponding elements"""
+    assert len(v) == len(w), "vectors must be the same length"
+
+    return [v_i - w_i for v_i, w_i in zip(v, w)]
+
+assert subtract([5, 7, 9], [4, 5, 6]) == [1, 2, 3]
+
+def vector_sum(vectors: List[Vector]) -> Vector:
+    """Sums all corresponding elements"""
+    # Check that vectors is not empty
+    assert vectors, "no vectors provided!"
+
+    # Check the vectors are all the same size
+    num_elements = len(vectors[0])
+    assert all(len(v) == num_elements for v in vectors), "different sizes!"
+
+    # the i-th element of the result is the sum of every vector[i]
+    return [sum(vector[i] for vector in vectors)
+            for i in range(num_elements)]
+
+assert vector_sum([[1, 2], [3, 4], [5, 6], [7, 8]]) == [16, 20]
+
+def scalar_multiply(c: float, v: Vector) -> Vector:
+    """Multiplies every element by c"""
+    return [c * v_i for v_i in v]
+
+assert scalar_multiply(2, [1, 2, 3]) == [2, 4, 6]
+
+def vector_mean(vectors: List[Vector]) -> Vector:
+    """Computes the element-wise average"""
+    n = len(vectors)
+    return scalar_multiply(1/n, vector_sum(vectors))
+
+assert vector_mean([[1, 2], [3, 4], [5, 6]]) == [3, 4]
+
+def dot(v: Vector, w: Vector) -> float:
+    """Computes v_1 * w_1 + ... + v_n * w_n"""
+    assert len(v) == len(w), "vectors must be same length"
+
+    return sum(v_i * w_i for v_i, w_i in zip(v, w))
+
+assert dot([1, 2, 3], [4, 5, 6]) == 32  # 1 * 4 + 2 * 5 + 3 * 6
+
+def sum_of_squares(v: Vector) -> float:
+    """Returns v_1 * v_1 + ... + v_n * v_n"""
+    return dot(v, v)
+
+assert sum_of_squares([1, 2, 3]) == 14  # 1 * 1 + 2 * 2 + 3 * 3
+
+
+
+def magnitude(v: Vector) -> float:
+    """Returns the magnitude (or length) of v"""
+    return math.sqrt(sum_of_squares(v))   # math.sqrt is square root function
+
+assert magnitude([3, 4]) == 5
+
+def squared_distance(v: Vector, w: Vector) -> float:
+    """Computes (v_1 - w_1) ** 2 + ... + (v_n - w_n) ** 2"""
+    return sum_of_squares(subtract(v, w))
+
+def distance(v: Vector, w: Vector) -> float:
+    """Computes the distance between v and w"""
+    return math.sqrt(squared_distance(v, w))
+
+
+def distance(v: Vector, w: Vector) -> float:  # type: ignore
+    return magnitude(subtract(v, w))
+
+# Another type alias
+Matrix = List[List[float]]
+
+A = [[1, 2, 3],  # A has 2 rows and 3 columns
+     [4, 5, 6]]
+
+B = [[1, 2],     # B has 3 rows and 2 columns
+     [3, 4],
+     [5, 6]]
+
+from typing import Tuple
+
+def shape(A: Matrix) -> Tuple[int, int]:
+    """Returns (# of rows of A, # of columns of A)"""
+    num_rows = len(A)
+    num_cols = len(A[0]) if A else 0   # number of elements in first row
+    return num_rows, num_cols
+
+assert shape([[1, 2, 3], [4, 5, 6]]) == (2, 3)  # 2 rows, 3 columns
+
+def get_row(A: Matrix, i: int) -> Vector:
+    """Returns the i-th row of A (as a Vector)"""
+    return A[i]             # A[i] is already the ith row
+
+def get_column(A: Matrix, j: int) -> Vector:
+    """Returns the j-th column of A (as a Vector)"""
+    return [A_i[j]          # jth element of row A_i
+            for A_i in A]   # for each row A_i
+
+from typing import Callable
+
+def make_matrix(num_rows: int,
+                num_cols: int,
+                entry_fn: Callable[[int, int], float]) -> Matrix:
+    """
+    Returns a num_rows x num_cols matrix
+    whose (i,j)-th entry is entry_fn(i, j)
+    """
+    return [[entry_fn(i, j)             # given i, create a list
+             for j in range(num_cols)]  #   [entry_fn(i, 0), ... ]
+            for i in range(num_rows)]   # create one list for each i
+
+def identity_matrix(n: int) -> Matrix:
+    """Returns the n x n identity matrix"""
+    return make_matrix(n, n, lambda i, j: 1 if i == j else 0)
+
+assert identity_matrix(5) == [[1, 0, 0, 0, 0],
+                              [0, 1, 0, 0, 0],
+                              [0, 0, 1, 0, 0],
+                              [0, 0, 0, 1, 0],
+                              [0, 0, 0, 0, 1]]
+
+data = [[70, 170, 40],
+        [65, 120, 26],
+        [77, 250, 19],
+        # ....
+       ]
+
+friendships = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (3, 4),
+               (4, 5), (5, 6), (5, 7), (6, 8), (7, 8), (8, 9)]
+
+#            user 0  1  2  3  4  5  6  7  8  9
+#
+friend_matrix = [[0, 1, 1, 0, 0, 0, 0, 0, 0, 0],  # user 0
+                 [1, 0, 1, 1, 0, 0, 0, 0, 0, 0],  # user 1
+                 [1, 1, 0, 1, 0, 0, 0, 0, 0, 0],  # user 2
+                 [0, 1, 1, 0, 1, 0, 0, 0, 0, 0],  # user 3
+                 [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],  # user 4
+                 [0, 0, 0, 0, 1, 0, 1, 1, 0, 0],  # user 5
+                 [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],  # user 6
+                 [0, 0, 0, 0, 0, 1, 0, 0, 1, 0],  # user 7
+                 [0, 0, 0, 0, 0, 0, 1, 1, 0, 1],  # user 8
+                 [0, 0, 0, 0, 0, 0, 0, 0, 1, 0]]  # user 9
+
+assert friend_matrix[0][2] == 1, "0 and 2 are friends"
+assert friend_matrix[0][8] == 0, "0 and 8 are not friends"
+
+# only need to look at one row
+friends_of_five = [i
+                   for i, is_friend in enumerate(friend_matrix[5])
+                   if is_friend]
+
+
+# Add these tests to the end of your linear_algebra.py file
+# commit and push the update to GitHub
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Extra assert statements to test all of the functions you will need
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+assert add([1, 2, 3], [4, 5, 6]) == [5, 7, 9]
+assert subtract([5, 7, 9], [4, 5, 6]) == [1, 2, 3]
+assert vector_sum([[1, 2], [3, 4], [5, 6], [7, 8]]) == [16, 20]
+assert scalar_multiply(2, [1, 2, 3]) == [2, 4, 6]
+assert vector_mean([[1, 2], [3, 4], [5, 6]]) == [3, 4]
+assert dot([1, 2, 3], [4, 5, 6]) == 32  # 1 * 4 + 2 * 5 + 3 * 6
+assert sum_of_squares([1, 2, 3]) == 14  # 1 * 1 + 2 * 2 + 3 * 3
+assert magnitude([3, 4]) == 5
+assert shape([[1, 2, 3], [4, 5, 6]]) == (2, 3)  # 2 rows, 3 columns
+assert distance([1,1],[4,1]) == 3.0
+assert squared_distance([1,2,3],[2,3,4]) == 3
+assert scalar_multiply(2, [1,2,3]) == [2,4,6]
+assert magnitude([0,0,4,3]) == 5.0
+
+# Work on an Identity Matrix
+id = [  [1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 1] ]
+
+assert get_column(id,2) == [0, 0, 1, 0, 0]
+assert get_row(id,2) == [0, 0, 1, 0, 0]
+assert get_column(id,2) == get_row(id,2)
+assert identity_matrix(5) == id
+assert make_matrix(5,5, lambda i,j: 1 if i == j else 0) == id
+assert shape(id) == (5,5)
+
+
+# Hi!
